@@ -1,0 +1,122 @@
+import React, { useState } from "react";
+
+export default function App() {
+  const [task, setTask] = useState("");
+  const [todos, setTodos] = useState([]);
+  const [editIndex, setEditIndex] = useState(null);
+  const [editText, setEditText] = useState("");
+  const [search, setSearch] = useState("");
+
+  // Add Task
+  function addTask() {
+    if (task.trim() === "") return;
+
+    setTodos([...todos, task]);
+    setTask("");
+  }
+
+  // Delete Task
+  function deleteTask(index) {
+    const newTodos = todos.filter((_, i) => i !== index);
+    setTodos(newTodos);
+  }
+
+  // Start Editing
+  function startEdit(index) {
+    setEditIndex(index);
+    setEditText(todos[index]);
+  }
+
+  // Save Edited Task
+  function saveEdit(index) {
+    const updatedTodos = [...todos];
+    updatedTodos[index] = editText;
+
+    setTodos(updatedTodos);
+    setEditIndex(null);
+    setEditText("");
+  }
+
+  // Filter Tasks
+  const filteredTodos = todos.filter((todo) =>
+    todo.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h1>TODO APP</h1>
+
+      {/* Add Task */}
+      <input
+        type="text"
+        placeholder="Enter a task"
+        value={task}
+        onChange={(e) => setTask(e.target.value)}
+      />
+
+      <button onClick={addTask} style={{ marginLeft: "10px" }}>
+        Submit
+      </button>
+
+      <br />
+      <br />
+
+      {/* Search Task */}
+      <input
+        type="text"
+        placeholder="Search task"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
+      <hr />
+
+      <h2>My List</h2>
+
+      {filteredTodos.length === 0 ? (
+        <p>No tasks found</p>
+      ) : (
+        filteredTodos.map((value, index) => (
+          <div key={index} style={{ margin: "10px" }}>
+            {editIndex === index ? (
+              <>
+                <input
+                  type="text"
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                />
+
+                <button
+                  onClick={() => saveEdit(index)}
+                  style={{ marginLeft: "10px" }}
+                >
+                  Save
+                </button>
+              </>
+            ) : (
+              <>
+                <span>
+                  {index + 1}. {value}
+                </span>
+
+                <button
+                  onClick={() => startEdit(index)}
+                  style={{ marginLeft: "10px" }}
+                >
+                  Edit
+                </button>
+
+                <button
+                  onClick={() => deleteTask(index)}
+                  style={{ marginLeft: "10px" }}
+                >
+                  Delete
+                </button>
+              </>
+            )}
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
